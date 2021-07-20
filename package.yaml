@@ -1,32 +1,42 @@
 name:                tripwire
 version:             0.1.0.0
-github:              "Github username here/tripwire"
+github:              "Innf107/tripwire"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "Author email here"
-copyright:           "2019 Author name here"
+author:              "Finn Schneider"
+maintainer:          "finn@famschneider.info"
+copyright:           "2019 "
 
 extra-source-files:
 - README.md
 - ChangeLog.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            App category here
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/Github username here/tripwire#readme>
+description:         Please see the README on GitHub at <https://github.com/Innf107/tripwire#readme>
 
 dependencies:
 - base >= 4.7 && < 5
+- relude
+- lens
+- cereal
+- clock
+- process
+- unliftio
+- connection
+- random
+- bytestring
+- text
+- optparse-applicative
+- aeson
+- req
+- directory
+- filepath
+- template-haskell
+- modern-uri
 
 library:
   source-dirs: src
 
 executables:
-  tripwire-exe:
+  tripwire:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -46,3 +56,55 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - tripwire
+
+default-extensions:
+  - NoImplicitPrelude
+  - ApplicativeDo
+  - LambdaCase
+  - OverloadedStrings
+  - DataKinds
+  - TypeFamilies
+  - TypeFamilyDependencies
+  - FlexibleInstances
+  - FlexibleContexts
+  - RankNTypes
+  - MultiParamTypeClasses
+  - PatternSynonyms
+  - StandaloneDeriving
+  - StandaloneKindSignatures
+  - GADTs
+  - ConstraintKinds
+  - ScopedTypeVariables
+  - BlockArguments
+  - TypeOperators
+  - NamedFieldPuns
+  - MultiWayIf
+  - PostfixOperators
+  - KindSignatures
+  - TypeApplications
+  - PolyKinds
+  - ViewPatterns
+  - TupleSections
+  - DisambiguateRecordFields
+  - ImportQualifiedPost
+  - NegativeLiterals
+  - DeriveGeneric
+  - DeriveDataTypeable
+  - BangPatterns
+  - DefaultSignatures
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyCase
+  - ExistentialQuantification
+  - GeneralizedNewtypeDeriving
+  - InstanceSigs
+  - EmptyDataDeriving
+  - RecordWildCards
+  - FunctionalDependencies
+  - NumericUnderscores
+  - NumDecimals
+  - RoleAnnotations
+  - QuantifiedConstraints
+

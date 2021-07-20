@@ -1,6 +1,34 @@
 module Main where
 
-import Lib
+import Relude
+import Control.Lens
+
+import Options.Applicative
+
+import Tripwire
+import Network.HTTP.Req
+
+import System.Directory
+import System.FilePath
 
 main :: IO ()
-main = someFunc
+main = optParser >>= \p -> execParser (info (p <**> helper) desc) >>= postProcessConfig >>= flip runTripwireM tripwire
+
+desc :: InfoMod Config
+desc = fullDesc
+
+optParser :: IO (Parser (Config))
+optParser = do
+    home <- getHomeDirectory
+    pure $ config
+            <$> strOption (long "home" <> metavar "DIR" <> value (home </> ".tripwire"))
+            <*> option (InstallServer . http <$> str) (long "server" <> metavar "URL" <> value (InstallServer defaultServerURL))  --TODO: Replace 'http' with actual url parser
+            <*> option auto (long "java-Xmx" <> metavar "BYTES" <> value 4e9)
+            <*> option (Just <$> auto) (long "setup" <> metavar "FUNCTION" <> value Nothing)
+            <*> option auto (long "iterations" <> metavar "COUNT" <> value 10)
+            <*> strArgument (metavar "TARGET")
+            <*> strArgument (metavar "RUNFUNCTION")
+
+postProcessConfig :: Config -> IO Config
+postProcessConfig = traverseOf tripwireTarget makeAbsolute
+
