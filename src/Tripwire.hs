@@ -42,6 +42,8 @@ import Text.URI
 
 import Network.RCON.Minecraft
 
+import Control.Concurrent (threadDelay)
+
 defaultServerURL :: Url Http
 defaultServerURL = fst . M.fromJust $ useHttpURI =<< mkURI "http://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar"
 
@@ -84,16 +86,22 @@ tripwire = do
 
         iterations <- liftT $ view tripwireIterations
 
-        times <- forM [1..iterations] \i -> do
+        times <- catMaybes <$> forM [1..iterations] \i -> do
             startTime <- liftIO $ getTime Monotonic
-            sendCommand $ "function " <> runFunction
-            endTime <- liftIO $ getTime Monotonic
-            let time = diffTimeSpec startTime endTime
-            liftT $ log $ "[" <> show i <> "]: " <> displayTime time
-            pure time
+            (sendCommand ("function " <> runFunction) >>= \case
+                Nothing -> do
+                    liftT $ log $ "[" <> show i <> "]: TIMEOUT!"
+                    pure Nothing
+                Just _ -> do
+                    endTime <- liftIO $ getTime Monotonic
+                    let time = diffTimeSpec startTime endTime
+                    liftT $ log $ "[" <> show i <> "]: " <> displayTime time
+                    pure $ Just time)
+                <* liftIO (threadDelay 0.5e6)
+
 
         putTextLn "\n"
-        putTextLn $ "Average: " <> displayTime (fromNanoSecs (sum (map toNanoSecs times) `div` fromIntegral iterations))
+        putTextLn $ "Average: " <> displayTime (fromNanoSecs $ averageInt (map toNanoSecs times))
         putTextLn $ "Min: " <> displayTime (minimum times)
         putTextLn $ "Max: " <> displayTime (maximum times)
 

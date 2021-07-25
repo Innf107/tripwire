@@ -28,3 +28,8 @@ copyFileOrDirectory parents from to = liftIO $
                 forM_ files $ \file -> copyFileOrDirectory parents (from </> file) (to </> file)
             False -> fail $ "copyFileOrDirectory: File does not exist: " <> from
 
+average :: (Fractional a) => [a] -> a
+average xs = sum xs / fromIntegral (length xs)
+
+averageInt :: (Integral a) => [a] -> a
+averageInt xs = sum xs `div` fromIntegral (length xs)

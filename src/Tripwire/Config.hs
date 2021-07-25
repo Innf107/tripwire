@@ -1,4 +1,4 @@
-{-# LANGUAGE UndecidableInstances, TemplateHaskell #-}
+{-# LANGUAGE UndecidableInstances, TemplateHaskell, RecordWildCards #-}
 module Tripwire.Config where
 
 import Relude
@@ -18,6 +18,7 @@ data ConfigF f = ConfigF {
 ,   _tripwireJavaMemoryBytesF :: f Integer
 ,   _tripwireSetupFunctionF :: f (Maybe Text)
 ,   _tripwireIterationsF :: f Int
+,   _tripwireTimeoutMicrosecondsF :: f Int
 ,   _tripwireTargetF :: f FilePath
 ,   _tripwireRunFunctionF :: f Text
 } deriving (Generic)
@@ -29,9 +30,9 @@ instance          (AllC ToJSON      (ConfigDeps f)) => ToJSON   (ConfigF f)
 instance          (AllC FromJSON    (ConfigDeps f)) => FromJSON (ConfigF f)
 
 type Config = ConfigF Identity
-config :: FilePath -> ServerState -> Integer -> Maybe Text -> Int -> FilePath -> Text -> Config
-config home server mem setup it target rf =
-    ConfigF (Identity home) (Identity server) (Identity mem) (Identity setup) (Identity it) (Identity target) (Identity rf)
+config :: FilePath -> ServerState -> Integer -> Maybe Text -> Int -> Int -> FilePath -> Text -> Config
+config home server mem setup it t target rf =
+    ConfigF (Identity home) (Identity server) (Identity mem) (Identity setup) (Identity it) (Identity t) (Identity target) (Identity rf)
 
 data ServerState = InstallServer (Url Http)
                  | Installed FilePath
@@ -64,20 +65,22 @@ tripwireIterations = lensID _tripwireIterationsF (\s x -> s{_tripwireIterationsF
 tripwireTarget :: Lens' Config FilePath
 tripwireTarget = lensID _tripwireTargetF (\s x -> s{_tripwireTargetF=x})
 
+tripwireTimeoutMicroseconds :: Lens' Config Int
+tripwireTimeoutMicroseconds = lensID _tripwireTimeoutMicrosecondsF (\s x -> s{_tripwireTimeoutMicrosecondsF=x})
+
 tripwireRunFunction :: Lens' Config Text
 tripwireRunFunction = lensID _tripwireRunFunctionF (\s x -> s{_tripwireRunFunctionF=x})
 
 
 
 sequenceConfig :: (Applicative f) => ConfigF f -> f Config
-sequenceConfig ConfigF{ _tripwireHomeF, _tripwireServerF, _tripwireJavaMemoryBytesF, _tripwireSetupFunctionF
-                      , _tripwireIterationsF, _tripwireTargetF, _tripwireRunFunctionF
-                      } =
+sequenceConfig ConfigF{..} =
     config
         <$> _tripwireHomeF
         <*> _tripwireServerF
         <*> _tripwireJavaMemoryBytesF
         <*> _tripwireSetupFunctionF
         <*> _tripwireIterationsF
+        <*> _tripwireTimeoutMicrosecondsF
         <*> _tripwireTargetF
         <*> _tripwireRunFunctionF

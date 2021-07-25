@@ -24,7 +24,6 @@ dependencies:
 - random
 - bytestring
 - text
-- optparse-applicative
 - aeson
 - req
 - directory
@@ -45,6 +44,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - tripwire
+    - optparse-applicative
 
 tests:
   tripwire-test:

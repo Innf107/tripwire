@@ -26,6 +26,7 @@ optParser = do
             <*> option auto (long "java-Xmx" <> metavar "BYTES" <> value 4e9)
             <*> option (Just <$> auto) (long "setup" <> metavar "FUNCTION" <> value Nothing)
             <*> option auto (long "iterations" <> metavar "COUNT" <> value 10)
+            <*> option auto (long "timeout" <> metavar "MICROSECONDS" <> value 30e6)
             <*> strArgument (metavar "TARGET")
             <*> strArgument (metavar "RUNFUNCTION")
 

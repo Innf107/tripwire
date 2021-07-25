@@ -98,7 +98,6 @@ library
     , filepath
     , lens
     , modern-uri
-    , optparse-applicative
     , process
     , random
     , relude
@@ -256,7 +255,6 @@ test-suite tripwire-test
     , filepath
     , lens
     , modern-uri
-    , optparse-applicative
     , process
     , random
     , relude

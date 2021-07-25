@@ -19,6 +19,7 @@ import System.Process
 import System.Directory
 
 import qualified Data.Text as T
+import Control.Concurrent (forkIO)
 
 downloadServer :: Url s -> IO LByteString
 downloadServer serverUrl = do
@@ -38,15 +39,20 @@ downloadAndInstallServer serverUrl = do
 
 runWithServer :: Rcon a -> TripwireM a
 runWithServer m = do
-    javaMemoryBytes <- view tripwireJavaMemoryBytes
-    liftIO $ withCreateProcess (proc "java" ["-jar", "-Xmx" <> show javaMemoryBytes, "server.jar", "-nogui"]){std_out=CreatePipe} \_ (Just sout) _ _ ->
+    javaMemoryBytes     <- view tripwireJavaMemoryBytes
+    timeoutMicroseconds <- view tripwireTimeoutMicroseconds
+    liftIO $ withCreateProcess (proc "java" ["-jar", "-Xmx" <> show javaMemoryBytes, "server.jar", "-nogui"]){std_out=CreatePipe}
+        \_ (Just sout) _ _ ->
         bracket_
             (do
                 repeatUntil ("RCON running on"`T.isInfixOf`) (toText <$> hGetLine sout)
+                forkIO $ forever $ tryIO (hGetLine sout) >> pure () -- necessary hack to drain 'sout'. If we didn't do this,
+                                                                    -- 'sout's buffer would fill up and the server would hang.
                 copyFileOrDirectory False "world" "worldBACKUP")
             (do
                 removePathForcibly "world"
                 copyFileOrDirectory False "worldBACKUP" "world")
-            (runRcon (ServerInfo{serverHost="localhost", serverPort=25575, serverPassword="tripwire"}) 10e6 m)
+            (runRcon (ServerInfo{serverHost="localhost", serverPort=25575, serverPassword="tripwire"}) timeoutMicroseconds m)
+
 
 
