@@ -25,7 +25,8 @@ optParser = do
             <*> option (InstallServer . http <$> str) (long "server" <> metavar "URL" <> value (InstallServer defaultServerURL))  --TODO: Replace 'http' with actual url parser
             <*> option auto (long "java-Xmx" <> metavar "BYTES" <> value 4e9)
             <*> option (Just <$> auto) (long "setup" <> metavar "FUNCTION" <> value Nothing)
-            <*> option auto (long "iterations" <> metavar "COUNT" <> value 10)
+            <*> switch (long "require-input")
+            <*> option auto (long "iterations" <> metavar "COUNT" <> value 20)
             <*> option auto (long "timeout" <> metavar "MICROSECONDS" <> value 30e6)
             <*> strArgument (metavar "TARGET")
             <*> strArgument (metavar "RUNFUNCTION")

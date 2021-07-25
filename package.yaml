@@ -14,6 +14,7 @@ description:         Please see the README on GitHub at <https://github.com/Innf
 
 dependencies:
 - base >= 4.7 && < 5
+- mcrcon
 - relude
 - lens
 - cereal

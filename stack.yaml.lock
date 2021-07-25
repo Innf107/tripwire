@@ -10,4 +10,15 @@ snapshots:
     sha256: 7abb45c0cc5eb349448b66d8753655542d45d387ad26970419282eab3d860724
     url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/2.yaml
     size: 585392
-packages: []
+packages:
+- original:
+    git: https://github.com/Innf107/mcrcon.git
+    commit: 4178833e4610ed04dbb89f5d0e693ffb6f231afd
+  completed:
+    pantry-tree:
+      sha256: 977be6441874cbea16e1c7267611d0653c220d85953eac5c1e5481c76f4691e3
+      size: 629
+    version: 0.1.0.0
+    git: https://github.com/Innf107/mcrcon.git
+    name: mcrcon
+    commit: 4178833e4610ed04dbb89f5d0e693ffb6f231afd

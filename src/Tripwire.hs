@@ -81,6 +81,10 @@ tripwire = do
             liftT $ log "Running setup..."
             void $ sendCommand $ "function " <> setup
 
+        whenM (liftT $ view tripwireRequireInput) do
+            putStrLn "Press Enter to start"
+            void getLine
+
         liftT $ log "Running timing..."
 
         runFunction <- liftT $ view tripwireRunFunction

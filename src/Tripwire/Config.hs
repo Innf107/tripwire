@@ -17,12 +17,13 @@ data ConfigF f = ConfigF {
 ,   _tripwireServerF :: f ServerState
 ,   _tripwireJavaMemoryBytesF :: f Integer
 ,   _tripwireSetupFunctionF :: f (Maybe Text)
+,   _tripwireRequireInputF :: f Bool
 ,   _tripwireIterationsF :: f Int
 ,   _tripwireTimeoutMicrosecondsF :: f Int
 ,   _tripwireTargetF :: f FilePath
 ,   _tripwireRunFunctionF :: f Text
 } deriving (Generic)
-type ConfigDeps f = FMap f [FilePath, ServerState, Integer, Text, Maybe Text, Int]
+type ConfigDeps f = FMap f [FilePath, ServerState, Integer, Text, Maybe Text, Bool, Int]
 
 deriving instance (AllC Show        (ConfigDeps f)) => Show     (ConfigF f)
 deriving instance (AllC Eq          (ConfigDeps f)) => Eq       (ConfigF f)
@@ -30,9 +31,9 @@ instance          (AllC ToJSON      (ConfigDeps f)) => ToJSON   (ConfigF f)
 instance          (AllC FromJSON    (ConfigDeps f)) => FromJSON (ConfigF f)
 
 type Config = ConfigF Identity
-config :: FilePath -> ServerState -> Integer -> Maybe Text -> Int -> Int -> FilePath -> Text -> Config
-config home server mem setup it t target rf =
-    ConfigF (Identity home) (Identity server) (Identity mem) (Identity setup) (Identity it) (Identity t) (Identity target) (Identity rf)
+config :: FilePath -> ServerState -> Integer -> Maybe Text -> Bool -> Int -> Int -> FilePath -> Text -> Config
+config home server mem setup ri it t target rf =
+    ConfigF (Identity home) (Identity server) (Identity mem) (Identity setup) (Identity ri) (Identity it) (Identity t) (Identity target) (Identity rf)
 
 data ServerState = InstallServer (Url Http)
                  | Installed FilePath
@@ -59,6 +60,9 @@ tripwireJavaMemoryBytes = lensID _tripwireJavaMemoryBytesF (\s x -> s{_tripwireJ
 tripwireSetupFunction :: Lens' Config (Maybe Text)
 tripwireSetupFunction = lensID _tripwireSetupFunctionF (\s x -> s{_tripwireSetupFunctionF=x})
 
+tripwireRequireInput :: Lens' Config Bool
+tripwireRequireInput = lensID _tripwireRequireInputF (\s x -> s{_tripwireRequireInputF=x})
+
 tripwireIterations :: Lens' Config Int
 tripwireIterations = lensID _tripwireIterationsF (\s x -> s{_tripwireIterationsF=x})
 
@@ -80,6 +84,7 @@ sequenceConfig ConfigF{..} =
         <*> _tripwireServerF
         <*> _tripwireJavaMemoryBytesF
         <*> _tripwireSetupFunctionF
+        <*> _tripwireRequireInputF
         <*> _tripwireIterationsF
         <*> _tripwireTimeoutMicrosecondsF
         <*> _tripwireTargetF
