@@ -35,6 +35,7 @@ import System.FilePath
 import System.Clock
 
 import Data.List (minimum, maximum)
+import qualified Data.Text as T
 
 import UnliftIO
 
@@ -107,7 +108,7 @@ tripwire = do
 
 
 displayTime :: TimeSpec -> Text
-displayTime = show
+displayTime (TimeSpec secs nsecs) = show secs <> "." <> T.justifyRight 9 '0' (show nsecs) <> "s"
 
 
 
