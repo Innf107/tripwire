@@ -89,17 +89,13 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
-    , bytestring
-    , cereal
     , clock
-    , connection
     , directory
     , filepath
     , lens
     , mcrcon
     , modern-uri
     , process
-    , random
     , relude
     , req
     , template-haskell
@@ -167,10 +163,7 @@ executable tripwire
   build-depends:
       aeson
     , base >=4.7 && <5
-    , bytestring
-    , cereal
     , clock
-    , connection
     , directory
     , filepath
     , lens
@@ -178,7 +171,6 @@ executable tripwire
     , modern-uri
     , optparse-applicative
     , process
-    , random
     , relude
     , req
     , template-haskell
@@ -248,17 +240,13 @@ test-suite tripwire-test
   build-depends:
       aeson
     , base >=4.7 && <5
-    , bytestring
-    , cereal
     , clock
-    , connection
     , directory
     , filepath
     , lens
     , mcrcon
     , modern-uri
     , process
-    , random
     , relude
     , req
     , template-haskell
