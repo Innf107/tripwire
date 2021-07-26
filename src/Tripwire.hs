@@ -77,6 +77,8 @@ tripwire = do
             liftT = liftIO . run
         liftT $ log "Server ready!"
 
+        void $ sendCommand $ "gamerule maxCommandChainLength 2147483647"
+
         whenJustM (liftT $ view tripwireSetupFunction) \setup -> do
             liftT $ log "Running setup..."
             void $ sendCommand $ "function " <> setup
